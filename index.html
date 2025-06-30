@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scriptoid AI - Professional AI Agent Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            opacity: 1;
+            color: var(--secondary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #0da271;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 6rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .avatar-container {
+            position: relative;
+            height: 450px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #0f172a, #1e293b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: var(--gray);
+        }
+
+        .avatar-placeholder i {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .avatar-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            max-height: 350px;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: var(--primary);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .mic-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .mic-btn.active {
+            color: var(--secondary);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.4rem 0.8rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--secondary);
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--secondary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                gap: 1.5rem;
+                margin-top: 8rem;
+            }
+            
+            .avatar-container {
+                height: 350px;
+            }
+            
+            .panel {
+                padding: 1.2rem;
+            }
+            
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: var(--darker);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.5rem;
+                z-index: 1000;
+                text-align: center;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Animation for speaking avatar */
+        @keyframes speak {
+            0% { transform: scaleY(1); }
+            50% { transform: scaleY(1.1); }
+            100% { transform: scaleY(1); }
+        }
+
+        .speaking .avatar-mouth {
+            animation: speak 0.4s infinite;
+        }
+
+        /* Waveform animation */
+        .waveform {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 40px;
+            gap: 3px;
+            margin: 15px 0;
+        }
+
+        .waveform-bar {
+            width: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+            animation: waveform 1.2s infinite ease-in-out;
+        }
+
+        @keyframes waveform {
+            0%, 100% { height: 10px; }
+            50% { height: 25px; }
+        }
+
+        .waveform-bar:nth-child(2) { animation-delay: 0.1s; }
+        .waveform-bar:nth-child(3) { animation-delay: 0.2s; }
+        .waveform-bar:nth-child(4) { animation-delay: 0.3s; }
+        .waveform-bar:nth-child(5) { animation-delay: 0.4s; }
+        .waveform-bar:nth-child(6) { animation-delay: 0.5s; }
+        .waveform-bar:nth-child(7) { animation-delay: 0.6s; }
+        .waveform-bar:nth-child(8) { animation-delay: 0.7s; }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: inline-flex;
+            gap: 5px;
+            padding-top: 10px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--light);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* Avatar animation */
+        .avatar {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            border-radius: 50%;
+            background: #4a5568;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-face {
+            width: 160px;
+            height: 160px;
+            background: #fbd38d;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .avatar-eye {
+            width: 20px;
+            height: 20px;
+            background: #2d3748;
+            border-radius: 50%;
+            position: absolute;
+            top: 50px;
+        }
+
+        .eye-left {
+            left: 40px;
+        }
+
+        .eye-right {
+            right: 40px;
+        }
+
+        .avatar-mouth {
+            width: 80px;
+            height: 30px;
+            background: #e53e3e;
+            border-radius: 0 0 40px 40px;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.2s ease;
+        }
+
+        .speaking .avatar-mouth {
+            height: 15px;
+            border-radius: 10px;
+            animation: speak 0.4s infinite;
+        }
+        
+        /* Page sections */
+        .page-section {
+            padding: 5rem 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--secondary);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+        
+        .solutions-grid, .pricing-grid, .contact-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .solution-card, .pricing-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .solution-card:hover, .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+        
+        .solution-card i, .pricing-card i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-card {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--secondary);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: var(--secondary);
+            color: white;
+            padding: 0.3rem 2.5rem;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1.5rem 0;
+            color: var(--secondary);
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+        
+        .contact-form, .login-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        textarea, input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070') no-repeat center center;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-description {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .get-started-btn {
+            background: var(--secondary);
+            color: white;
+            font-size: 1.2rem;
+            padding: 1rem 2.5rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--gray);
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            header {
+                padding: 1rem;
+            }
+            
+            .page-section {
+                padding: 7rem 0 3rem;
+            }
+        }
+
+        .api-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .api-status.connected {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .api-status.disconnected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .api-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .api-status.connected .api-status-dot {
+            background: var(--secondary);
+            animation: pulse 2s infinite;
+        }
+
+        .api-status.disconnected .api-status-dot {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <!-- API Status Indicator -->
+    <div class="api-status connected" id="api-status">
+        <div class="api-status-dot"></div>
+        <span>GPT-4 Connected</span>
+    </div>
+
+    <!-- Fixed Navigation -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            <span>Scriptoid AI</span>
+        </div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#features">Features</a>
+            <a href="#solutions">Solutions</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div>
+            <button class="btn btn-outline" id="signin-btn">Sign In</button>
+            <button class="btn" id="get-started-btn">Get Started</button>
+        </div>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home" class="page-section">
+        <div class="container">
+            <div class="main-content">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">AI Assistant</h2>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Online & Ready</span>
+                        </div>
+                    </div>
+                    
+                    <div class="avatar-container">
+                        <div class="avatar">
+                            <div class="avatar-face">
+                                <div class="avatar-eye eye-left"></div>
+                                <div class="avatar-eye eye-right"></div>
+                                <div class="avatar-mouth" id="avatar-mouth"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="avatar-controls">
+                            <button class="btn btn-outline" id="settings-btn">
+                                <i class="fas fa-cog"></i> Settings
+                            </button>
+                            <button class="btn btn-secondary" id="restart-btn">
+                                <i class="fas fa-redo"></i> Restart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="language-selector">
+                        <button class="lang-btn active" id="lang-en">English</button>
+                        <button class="lang-btn" id="lang-hi">हिंदी (Hindi)</button>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Conversation</h2>
+                        <button class="btn btn-outline" id="history-btn">
+                            <i class="fas fa-history"></i> History
+                        </button>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-history" id="chat-history">
+                            <div class="message ai-message">
+                                <div class="message-header">
+                                    <i class="fas fa-robot"></i>
+                                    <span>Scriptoid AI</span>
+                                </div>
+                                <div>Hello! I'm your Scriptoid AI assistant. How can I help you today? You can ask me anything in English or Hindi.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-area">
+                            <div class="input-group">
+                                <input type="text" id="user-input" placeholder="Type your message or use microphone...">
+                                <button class="mic-btn" id="mic-btn">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                            <button class="btn" id="send-btn">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="page-section">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3 class="feature-title">Realistic 3D Avatar</h3>
+                    <p class="feature-desc">Human-like avatar with natural expressions and lip-syncing to speech.</p>
+                      <link rel="stylesheet" href="style.c<div class="feature-icon">
+                       <i class="fas fa-brain"></i>
+                    </div>
+                    <section>
+               <h3 class="feature-title">GPT-4 Intelligence</h3>
+                    <p class="feature-desc">Powered by OpenAI's most advanced AI for human-like conversations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    
+               <h3 class="feature-title">Multilingual Support</h3>
+                    <p class="feature-desc">Communicate in English and Hindi with more languages coming soon.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Voice Interaction</h3>
+                    <p class="feature-desc">Natural voice conversations with real-time speech recognition.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                   
+                  <h3 class="feature-title">Responsive Design</h3>
+                    <p class="feature-desc">Works perfectly on all devices from desktop to mobile.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                  
+                 <h3 class="feature-title">Customizable</h3>
+                    <p class="feature-desc">Brand with your identity and customize the assistant to your needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+   
+
+    <!-- Solutions Section -->
+    <section id="solutions" class="page-section">
+        <div class="container">
+           
+            <h2 class="section-title">Industry Solutions</h2>
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <i class="fas fa-headset"></i>
+                   
+                <h3>Customer Service</h3>
+                    <p>24/7 customer support with human-like interactions and instant issue resolution.</p>
+                </div>
+                
+                <div class="solution-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Education</h3>
+                    <p>Personalized tutoring and interactive learning experiences for students of all ages.</p>
+                </div>
+                
+                <div class="solution-card">
+                    <i class="fas fa-heartbeat"></i>
+                    <h3>Healthcare</h3>
+                    <p>Patient support, appointment scheduling, and health information delivery.</p>
+                </div>
+                
+                <div class="solution-card">
+                    <i class="fas fa-shopping-cart"></i>
+                   
+                   <h3>E-Commerce</h3>
+                    <p>Personal shopping assistants that understand preferences and make recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="page-section">
+        <div class="container">
+            <h2 class="section-title">Pricing Plans</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">$5<span>/month</span></div>
+                    <ul style="list-style: none; padding: 0; text-align: left; margin-bottom: 2rem;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> 500 interactions/month
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> 1 AI Avatar
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> Basic Customization
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-times" style="color: var(--gray); margin-right: 0.5rem;"></i> Priority Support
+                        </li>
+                    </ul>
+                    <button class="btn btn-outline">Get Started</button>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <h3>Professional</h3>
+                    <div class="price">$15<span>/month</span></div>
+                    <ul style="list-style: none; padding: 0; text-align: left; margin-bottom: 2rem;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> 5,000 interactions/month
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> 3 AI Avatars
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> Advanced Customization
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> Priority Support
+                        </li>
+                    </ul>
+                    <button class="btn">Get Started</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">$45<span>/month</span></div>
+                    <ul style="list-style: none; padding: 0; text-align: left; margin-bottom: 2rem;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> Unlimited interactions
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> Unlimited AI Avatars
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> Full Customization
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--card-border);">
+                            <i class="fas fa-check" style="color: var(--secondary); margin-right: 0.5rem;"></i> 24/7 Dedicated Support
+                        </li>
+                    </ul>
+                    <button class="btn btn-outline">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section id="login-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">Sign In to Your Account</h2>
+            <div class="login-form">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <input type="checkbox" id="remember">
+                            <label for="remember" style="display: inline; margin-left: 0.5rem;">Remember me</label>
+                        </div>
+                        <a href="#" style="color: var(--secondary);">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%;">Sign In</button>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <p>Don't have an account? <a href="#get-started-section" style="color: var(--secondary);">Sign up now</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get Started Section -->
+    <section id="get-started-section" class="page-section">
+        <div class="container">
+            <div class="cta-section">
+                <div class="cta-content">
+                    <h2 class="cta-title">Ready to Transform Your Business?</h2>
+                    <p class="cta-description">Join thousands of businesses using Scriptoid AI to enhance customer experience and streamline operations.</p>
+                    <button class="btn get-started-btn">Start Your Free Trial</button>
+                    <div style="margin-top: 2rem;">
+                        <p>No credit card required · 14-day free trial</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="page-section">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-form">
+                <div>
+                    <h3>Get in Touch</h3>
+                    <p>Have questions about Scriptoid AI? Our team is ready to help you implement the perfect AI solution for your business.</p>
+                    
+                    <div style="margin-top: 2rem;">
+                        <p><i class="fas fa-map-marker-alt" style="margin-right: 1rem;"></i>Mumbai,India</p>
+                        <p><i class="fas fa-phone" style="margin-right: 1rem;"></i> +91-97285 17020</p>
+                        <p><i class="fas fa-envelope" style="margin-right: 1rem;"></i> contact@scriptoid.ai</p>
+                    </div>
+                </div>
+                
+                <form>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-email">Email</label>
+                        <input type="email" id="contact-email" placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" placeholder="How can we help you?"></textarea>
+                    </div>
+                    
+                    <button class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 Scriptoid AI. All rights reserved.</p>
+            <p>Professional AI Agent Platform</p>
+        </div>
+    </footer>
+
+    <script>
+        // State management
+        const state = {
+            isListening: false,
+            currentLanguage: 'en',
+            recognition: null,
+            messages: [
+                {
+                    sender: 'ai',
+                    text: 'Hello! I\'m your Scriptoid AI assistant. How can I help you today? You can ask me anything in English or Hindi.'
+                }
+            ]
+        };
+
+        // DOM elements
+        const elements = {
+            micBtn: document.getElementById('mic-btn'),
+            sendBtn: document.getElementById('send-btn'),
+            userInput: document.getElementById('user-input'),
+            chatHistory: document.getElementById('chat-history'),
+            restartBtn: document.getElementById('restart-btn'),
+            langEnBtn: document.getElementById('lang-en'),
+            langHiBtn: document.getElementById('lang-hi'),
+            settingsBtn: document.getElementById('settings-btn'),
+            historyBtn: document.getElementById('history-btn'),
+            avatarMouth: document.getElementById('avatar-mouth'),
+            mobileMenuBtn: document.getElementById('mobile-menu-btn'),
+            navLinks: document.getElementById('nav-links'),
+            navItems: document.querySelectorAll('.nav-links a'),
+            signinBtn: document.getElementById('signin-btn'),
+            getStartedBtn: document.getElementById('get-started-btn'),
+            loginForm: document.getElementById('login-form'),
+            apiStatus: document.getElementById('api-status')
+        };
+
+        // API Configuration
+        const API_CONFIG = {
+            endpoint: 'https://api.openai.com/v1/chat/completions',
+            model: 'gpt-4',
+            // IMPORTANT: Replace with your actual OpenAI API key
+            apiKey: 'sk-YourOpenAIAPIKeyHere' 
+        };
+
+        // Initialize speech recognition
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                state.recognition = new SpeechRecognition();
+                state.recognition.continuous = false;
+                state.recognition.interimResults = false;
+                state.recognition.lang = 'en-US';
+                
+                state.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    elements.userInput.value = transcript;
+                    processInput(transcript);
+                };
+                
+                state.recognition.onerror = (event) => {
+                    console.error('Speech recognition error', event.error);
+                    elements.micBtn.classList.remove('active');
+                    state.isListening = false;
+                    addMessage("System: Speech recognition failed. Please try again.", 'system');
+                };
+                
+                state.recognition.onend = () => {
+                    elements.micBtn.classList.remove('active');
+                    state.isListening = false;
+                };
+            } else {
+                elements.micBtn.style.display = 'none';
+                elements.userInput.placeholder = "Type your message...";
+            }
+        }
+
+        // Toggle listening
+        function toggleMicrophone() {
+            if (!state.recognition) {
+                addMessage("System: Speech recognition not supported in your browser.", 'system');
+                return;
+            }
+            
+            if (state.isListening) {
+                state.recognition.stop();
+            } else {
+                state.recognition.lang = state.currentLanguage === 'hi' ? 'hi-IN' : 'en-US';
+                state.recognition.start();
+                elements.micBtn.classList.add('active');
+                state.isListening = true;
+            }
+        }
+
+        // Process user input
+        async function processInput(message) {
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            
+            // Show typing indicator
+            const typingIndicator = addMessage("Scriptoid AI is thinking...", 'ai', true);
+            
+            try {
+                // Generate AI response from OpenAI API
+                const aiResponse = await generateAIResponse(message);
+                
+                // Remove typing indicator
+                typingIndicator.remove();
+                
+                // Add AI response
+                const aiMessage = addMessage(aiResponse, 'ai');
+                
+                // Add TTS waveform visualization
+                addWaveform(aiMessage);
+                
+                // Simulate speaking animation
+                simulateSpeaking();
+            } catch (error) {
+                // Remove typing indicator
+                typingIndicator.remove();
+                
+                // Show error message
+                addMessage(`System: ${error.message}`, 'system');
+                console.error('AI processing error:', error);
+                
+                // Update API status
+                elements.apiStatus.classList.remove('connected');
+                elements.apiStatus.classList.add('disconnected');
+                elements.apiStatus.querySelector('span').textContent = 'API Connection Error';
+            }
+        }
+
+        // Generate AI response using OpenAI API
+        async function generateAIResponse(input) {
+            try {
+                // Show API connection status
+                elements.apiStatus.classList.remove('disconnected');
+                elements.apiStatus.classList.add('connected');
+                elements.apiStatus.querySelector('span').textContent = 'Connecting to GPT-4...';
+                
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_CONFIG.apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: API_CONFIG.model,
+                        messages: [
+                            {
+                                role: "system",
+                                content: "You are Scriptoid AI, a helpful assistant. Respond concisely and helpfully."
+                            },
+                            {
+                                role: "user",
+                                content: input
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 500
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Update API status
+                elements.apiStatus.querySelector('span').textContent = 'GPT-4 Connected';
+                
+                return data.choices[0].message.content;
+            } catch (error) {
+                // Update API status
+                elements.apiStatus.classList.remove('connected');
+                elements.apiStatus.classList.add('disconnected');
+                elements.apiStatus.querySelector('span').textContent = 'API Connection Error';
+                
+                throw new Error("Sorry, I'm having trouble connecting to the AI service. Please try again later.");
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, sender, isTyping = false) {
+            const messageDiv = document.createElement('div');
+            
+            if (sender === 'user') {
+                messageDiv.className = 'message user-message';
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <i class="fas fa-user"></i>
+                        <span>You</span>
+                    </div>
+                    <div>${text}</div>
+                `;
+            } else if (sender === 'ai') {
+                messageDiv.className = `message ai-message ${isTyping ? 'typing' : ''}`;
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <i class="fas fa-robot"></i>
+                        <span>${isTyping ? 'Scriptoid AI is thinking...' : 'Scriptoid AI'}</span>
+                    </div>
+                    <div>${isTyping ? '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>' : text}</div>
+                `;
+            } else {
+                messageDiv.className = 'message system-message';
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <i class="fas fa-info-circle"></i>
+                        <span>System</span>
+                    </div>
+                    <div>${text}</div>
+                `;
+            }
+            
+            elements.chatHistory.appendChild(messageDiv);
+            elements.chatHistory.scrollTop = elements.chatHistory.scrollHeight;
+            
+            // Add to state
+            if (!isTyping) {
+                state.messages.push({
+                    sender: sender,
+                    text: text
+                });
+            }
+            
+            return messageDiv;
+        }
+
+        // Add waveform visualization
+        function addWaveform(messageElement) {
+            const waveformDiv = document.createElement('div');
+            waveformDiv.className = 'waveform';
+            waveformDiv.innerHTML = `
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+            `;
+            
+            const contentDiv = messageElement.querySelector('div:last-child');
+            contentDiv.appendChild(waveformDiv);
+            
+            setTimeout(() => {
+                waveformDiv.remove();
+            }, 3000);
+        }
+
+        // Simulate speaking animation
+        function simulateSpeaking() {
+            elements.avatarMouth.classList.add('speaking');
+            
+            setTimeout(() => {
+                elements.avatarMouth.classList.remove('speaking');
+            }, 2000 + Math.random() * 3000);
+        }
+
+        // Restart conversation
+        function restartConversation() {
+            elements.chatHistory.innerHTML = `
+                <div class="message ai-message">
+                    <div class="message-header">
+                        <i class="fas fa-robot"></i>
+                        <span>Scriptoid AI</span>
+                    </div>
+                    <div>Hello! I'm your Scriptoid AI assistant. How can I help you today? You can ask me anything in English or Hindi.</div>
+                </div>
+            `;
+            
+            state.messages = [{
+                sender: 'ai',
+                text: 'Hello! I\'m your Scriptoid AI assistant. How can I help you today? You can ask me anything in English or Hindi.'
+            }];
+            
+            addMessage("System: Conversation restarted", 'system');
+        }
+
+        // Switch language
+        function switchLanguage(lang) {
+            state.currentLanguage = lang;
+            
+            // Update button states
+            elements.langEnBtn.classList.toggle('active', lang === 'en');
+            elements.langHiBtn.classList.toggle('active', lang === 'hi');
+            
+            const langMsg = lang === 'hi' ? 
+                "System: अब हिंदी में बातचीत कर सकते हैं।" : 
+                "System: Switched to English conversation.";
+            
+            addMessage(langMsg, 'system');
+        }
+
+        // Initialize event listeners
+        function initEventListeners() {
+            // Microphone button
+            elements.micBtn.addEventListener('click', toggleMicrophone);
+            
+            // Send button
+            elements.sendBtn.addEventListener('click', () => {
+                const message = elements.userInput.value.trim();
+                if (message) {
+                    processInput(message);
+                    elements.userInput.value = '';
+                }
+            });
+            
+            // Enter key in input
+            elements.userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const message = elements.userInput.value.trim();
+                    if (message) {
+                        processInput(message);
+                        elements.userInput.value = '';
+                    }
+                }
+            });
+            
+            // Restart button
+            elements.restartBtn.addEventListener('click', restartConversation);
+            
+            // Language buttons
+            elements.langEnBtn.addEventListener('click', () => switchLanguage('en'));
+            elements.langHiBtn.addEventListener('click', () => switchLanguage('hi'));
+            
+            // Settings button
+            elements.settingsBtn.addEventListener('click', () => {
+                addMessage("System: Settings panel opened", 'system');
+            });
+            
+            // History button
+            elements.historyBtn.addEventListener('click', () => {
+                addMessage("System: Conversation history loaded", 'system');
+            });
+            
+            // Mobile menu toggle
+            elements.mobileMenuBtn.addEventListener('click', () => {
+                elements.navLinks.classList.toggle('active');
+            });
+            
+            // Navigation links
+            elements.navItems.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    // Update active class
+                    elements.navItems.forEach(item => item.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    // Close mobile menu if open
+                    elements.navLinks.classList.remove('active');
+                    
+                    // Scroll to section
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+            
+            // Sign In button
+            elements.signinBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Update nav active state
+                elements.navItems.forEach(item => item.classList.remove('active'));
+                // Scroll to login section
+                document.getElementById('login-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Get Started button
+            elements.getStartedBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Update nav active state
+                elements.navItems.forEach(item => item.classList.remove('active'));
+                // Scroll to get started section
+                document.getElementById('get-started-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Login form submission
+            elements.loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // In a real implementation, this would send to a server
+                alert(`Login attempt with email: ${email}`);
+                
+                // Show success message
+                addMessage("System: Login successful! Redirecting to dashboard...", 'system');
+            });
+        }
+
+        // Initialize the app
+        function initApp() {
+            initSpeechRecognition();
+            initEventListeners();
+            console.log("Scriptoid AI Agent initialized");
+        }
+
+        // Start the app when page loads
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>
